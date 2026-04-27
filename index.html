@@ -343,17 +343,21 @@
     <div class="body">
       <p><strong>HCPI → Course-Handicap (CHCP):</strong> Pro Spieler wird der HCPI über die offizielle Tabelle des Golfclub Ravensberger Land in das Course-Handicap des gewählten Abschlags umgerechnet.</p>
 
-      <p style="margin-top:14px"><strong>Vierer (Chapman):</strong></p>
-      <p>1. <strong>Team-Cap (HCPI-Ebene):</strong> Die Summe der HCPIs darf 72 nicht übersteigen. Falls doch, wird der höhere HCPI auf <code>72 − niedrigerer HCPI</code> reduziert und neu in CHCP umgerechnet.</p>
-      <p>2. <strong>Team-CHCP:</strong> <code>0,6 × CHCP des niedrigeren HCPI + 0,4 × CHCP des höheren HCPI</code>. Bei 0,5 wird auf ganze Schläge aufgerundet.</p>
-      <p>3. <strong>Schläge im Match:</strong> Volle Differenz der beiden Team-CHCPs (keine 3/4-Regel beim Vierer — bestätigt von Doris Siem / Golf Marketing GmbH).</p>
-      <p><em>Beispiel:</em> A HCPI 30,4 + B HCPI 54,0 → Summe 84,4 → B auf 41,6 begrenzt → CHCP 32 + 45 → 0,6×32 + 0,4×45 = 37,2 → <strong>Team-CHCP 37</strong>.</p>
+      <div id="howto-vierer">
+        <p style="margin-top:14px"><strong>Vierer (Chapman):</strong></p>
+        <p>1. <strong>Team-Cap (HCPI-Ebene):</strong> Die Summe der HCPIs darf 72 nicht übersteigen. Falls doch, wird der höhere HCPI auf <code>72 − niedrigerer HCPI</code> reduziert und neu in CHCP umgerechnet.</p>
+        <p>2. <strong>Team-CHCP:</strong> <code>0,6 × CHCP des niedrigeren HCPI + 0,4 × CHCP des höheren HCPI</code>. Bei 0,5 wird auf ganze Schläge aufgerundet.</p>
+        <p>3. <strong>Schläge im Match:</strong> Volle Differenz der beiden Team-CHCPs (keine 3/4-Regel beim Vierer).</p>
+        <p><em>Beispiel:</em> A HCPI 30,4 + B HCPI 54,0 → Summe 84,4 → B auf 41,6 begrenzt → CHCP 32 + 45 → 0,6×32 + 0,4×45 = 37,2 → <strong>Team-CHCP 37</strong>.</p>
+      </div>
 
-      <p style="margin-top:14px"><strong>Einzel (3/4-Vorgabe):</strong></p>
-      <p>1. <strong>HCP-Begrenzung:</strong> HCPI &gt; 45 dürfen am Einzel nicht teilnehmen. HCPIs zwischen 37 und 45 werden als HCPI <strong>36</strong> gewertet (Ausschreibung: "Bis HCP −45 (−45 bis −37 wird als −36 gewertet)") und dann ins CHCP des jeweiligen Abschlags umgerechnet.</p>
-      <p>2. <strong>Vorgabe:</strong> <code>(höheres CHCP − niedrigeres CHCP) × 3/4</code>, bei 0,5 wird aufgerundet.</p>
-      <p>3. Der Spieler mit dem niedrigeren CHCP spielt ohne Vorgabe; der höhere bekommt seine Schläge auf den Löchern mit der niedrigsten Vorgabeverteilung.</p>
-      <p><em>Beispiel:</em> A CHCP 18, B CHCP 11 → Differenz 7 → 7 × 3/4 = 5,25 → <strong>5 Schläge</strong> für A auf den Löchern SI 1–5.</p>
+      <div id="howto-einzel" style="display:none">
+        <p style="margin-top:14px"><strong>Einzel (3/4-Vorgabe):</strong></p>
+        <p>1. <strong>HCP-Begrenzung:</strong> HCPI &gt; 45 dürfen am Einzel nicht teilnehmen. HCPIs zwischen 37 und 45 werden als HCPI <strong>36</strong> gewertet (Ausschreibung: "Bis HCP −45 (−45 bis −37 wird als −36 gewertet)") und dann ins CHCP des jeweiligen Abschlags umgerechnet.</p>
+        <p>2. <strong>Vorgabe:</strong> <code>(höheres CHCP − niedrigeres CHCP) × 3/4</code>, bei 0,5 wird aufgerundet.</p>
+        <p>3. Der Spieler mit dem niedrigeren CHCP spielt ohne Vorgabe; der höhere bekommt seine Schläge auf den Löchern mit der niedrigsten Vorgabeverteilung.</p>
+        <p><em>Beispiel:</em> A CHCP 18, B CHCP 11 → Differenz 7 → 7 × 3/4 = 5,25 → <strong>5 Schläge</strong> für A auf den Löchern SI 1–5.</p>
+      </div>
     </div>
   </details>
 
@@ -737,6 +741,8 @@ $$(".mode-switch button").forEach(btn => {
     $$(".mode-switch button").forEach(b => b.classList.toggle("active", b === btn));
     $("#mode-vierer").style.display = (mode === "vierer") ? "" : "none";
     $("#mode-einzel").style.display = (mode === "einzel") ? "grid" : "none";
+    $("#howto-vierer").style.display = (mode === "vierer") ? "" : "none";
+    $("#howto-einzel").style.display = (mode === "einzel") ? "" : "none";
     recompute();
   });
 });
