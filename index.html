@@ -694,7 +694,7 @@ function recompute() {
 
   verdict.innerHTML =
     `<strong>${weaker}</strong> (${r.what} ${wHCP}) bekommt ` +
-    `<span class="num">${diffStrokes}</span> Schlag${diffStrokes === 1 ? "" : "e"} Vorgabe ` +
+    `<span class="num">${diffStrokes}</span> ${diffStrokes === 1 ? "Schlag" : "Schläge"} Vorgabe ` +
     `gegenüber <strong>${stronger}</strong> (${r.what} ${sHCP})${formula}.`;
   $("#holes-wrap").style.display = "";
   renderHoles(diffStrokes, weakerSide);
@@ -704,10 +704,17 @@ function renderHoles(diff, side) {
   const alloc = strokeAllocation(diff);
   const container = $("#holes");
   const legend = $("#legend");
+  const caption = $("#holes-caption");
   container.classList.remove("tone-a", "tone-b");
   legend.classList.remove("tone-a", "tone-b");
-  if (side === "A") { container.classList.add("tone-a"); legend.classList.add("tone-a"); }
-  else if (side === "B") { container.classList.add("tone-b"); legend.classList.add("tone-b"); }
+
+  const sideLabel = mode === "vierer"
+    ? (side === "A" ? "Team A" : "Team B")
+    : (side === "A" ? "Spieler A" : "Spieler B");
+  let colorWord = "gelb";
+  if (side === "A") { container.classList.add("tone-a"); legend.classList.add("tone-a"); colorWord = "blau"; }
+  else if (side === "B") { container.classList.add("tone-b"); legend.classList.add("tone-b"); colorWord = "orange"; }
+  caption.textContent = `Vorgabeverteilung Ravensberger Land (${colorWord} markiert: Schläge für ${sideLabel})`;
   container.innerHTML = "";
   for (const h of alloc) {
     const div = document.createElement("div");
