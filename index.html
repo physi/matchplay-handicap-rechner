@@ -842,6 +842,11 @@ function recomputeEinzel() {
 }
 
 function recompute() {
+  doRecompute();
+  writeUrlState();
+}
+
+function doRecompute() {
   let r = null;
   if (mode === "vierer") r = recomputeVierer();
   else r = recomputeEinzel();
@@ -991,12 +996,76 @@ function populateClubSelector() {
   sel.value = currentClub;
   sel.addEventListener("change", () => {
     currentClub = sel.value;
-    // URL anpassen, damit Stand teilbar bleibt
-    const url = new URL(location.href);
-    url.searchParams.set("club", currentClub);
-    history.replaceState(null, "", url);
     onClubChanged();
   });
+}
+
+// === URL-State (Mode/Club/HCPIs/Tees teilbar via URL-Parameter) ===
+// URL-Schema:
+//   ?mode=vierer|einzel
+//   &club=<slug>
+//   &a1=<HCPI>&a1t=<TeeId>&a2=&a2t=&b1=&b1t=&b2=&b2t=    (Vierer)
+//   &a=<HCPI>&at=<TeeId>&b=&bt=                          (Einzel)
+let _suppressUrlWrite = false;
+
+function writeUrlState() {
+  if (_suppressUrlWrite) return;
+  const url = new URL(location.href);
+  const p = url.searchParams;
+  p.set("mode", mode);
+  p.set("club", currentClub);
+  const setOrDel = (k, v) => { if (v !== "" && v != null) p.set(k, v); else p.delete(k); };
+  $$('#mode-vierer .player').forEach(el => {
+    const id = el.dataset.p.toLowerCase();  // a1, a2, b1, b2
+    setOrDel(id,        $(".hcpi", el).value);
+    setOrDel(id + "t",  $(".tee",  el).value);
+  });
+  $$('#mode-einzel .player').forEach(el => {
+    const id = el.dataset.sp.toLowerCase(); // a, b
+    setOrDel(id,        $(".hcpi", el).value);
+    setOrDel(id + "t",  $(".tee",  el).value);
+  });
+  history.replaceState(null, "", url);
+}
+
+function applyUrlState() {
+  const p = new URLSearchParams(location.search);
+  _suppressUrlWrite = true;     // während Init nicht zurückschreiben
+  try {
+    // Mode
+    const m = p.get("mode");
+    if (m === "vierer" || m === "einzel") {
+      const btn = document.querySelector(`.mode-switch button[data-mode="${m}"]`);
+      if (btn) btn.click();
+    }
+    // Vierer-Spieler
+    $$('#mode-vierer .player').forEach(el => {
+      const id = el.dataset.p.toLowerCase();
+      const hcpi = p.get(id);
+      const tee  = p.get(id + "t");
+      if (hcpi != null) $(".hcpi", el).value = hcpi;
+      if (tee != null) {
+        const sel = $(".tee", el);
+        if ([...sel.options].some(o => o.value === tee)) sel.value = tee;
+      }
+      updateVierer(el);
+    });
+    // Einzel-Spieler
+    $$('#mode-einzel .player').forEach(el => {
+      const id = el.dataset.sp.toLowerCase();
+      const hcpi = p.get(id);
+      const tee  = p.get(id + "t");
+      if (hcpi != null) $(".hcpi", el).value = hcpi;
+      if (tee != null) {
+        const sel = $(".tee", el);
+        if ([...sel.options].some(o => o.value === tee)) sel.value = tee;
+      }
+      updateEinzel(el);
+    });
+  } finally {
+    _suppressUrlWrite = false;
+  }
+  writeUrlState();   // einmal sauber schreiben mit ggf. korrigierten Werten
 }
 
 function onClubChanged() {
@@ -1011,6 +1080,7 @@ function onClubChanged() {
 populateClubSelector();
 populateTeeSelects();
 updateCourseLink();
+applyUrlState();
 </script>
 </body>
 </html>
